@@ -7,6 +7,7 @@ from facebook.config_loader import get_facebook_urls_for_city
 from facebook.scrape import scrape_facebook_group_posts_with_comments
 from twitter.scrape import search_twitter_for_city_with_replies
 from utils.dedupe import deduplicate_reviews
+from utils.seen import load_seen_hashes, save_seen_hashes, review_hash
 
 def save_reviews_to_csv(reviews, city):
     today = datetime.today().strftime("%Y-%m-%d")
@@ -44,6 +45,7 @@ if __name__ == "__main__":
         driver.quit()
         all_reviews.extend(fb_reviews)
 
+
     # Twitter scraping (tweets + replies)
     twitter_reviews = search_twitter_for_city_with_replies(city)
     for review in twitter_reviews:
@@ -52,6 +54,24 @@ if __name__ == "__main__":
         print(f"Date: {review['date']}")
     all_reviews.extend(twitter_reviews)
 
-    # Deduplicate and save
+    # Deduplicate first
     unique_reviews = deduplicate_reviews(all_reviews)
-    save_reviews_to_csv(unique_reviews, city)
+
+    # Load seen review hashes
+    seen_hashes = load_seen_hashes()
+    new_reviews = []
+    for review in unique_reviews:
+        h = review_hash(review)
+        if h not in seen_hashes:
+            new_reviews.append(review)
+            seen_hashes.add(h)
+    print(f"{len(new_reviews)} new reviews (never scraped before).")
+
+    # Save updated hashes
+    save_seen_hashes(seen_hashes)
+
+    # Save ONLY new reviews to CSV
+    if new_reviews:
+        save_reviews_to_csv(new_reviews, city)
+    else:
+        print("No new reviews to save")

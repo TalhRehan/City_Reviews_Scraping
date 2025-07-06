@@ -1,6 +1,6 @@
 from rapidfuzz import fuzz
 
-def is_exact_city_mention(text, city, threshold=85):
+def is_exact_city_mention(text, city, threshold=75):
     # Checks if the city is mentioned as a standalone word, not as part of another city
     words = text.lower().split()
     city_lower = city.lower()
