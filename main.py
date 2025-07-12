@@ -1,5 +1,5 @@
 import csv
-import os
+
 import sys
 from datetime import datetime
 from facebook.login_and_navigate import manual_facebook_login
