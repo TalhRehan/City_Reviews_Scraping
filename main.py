@@ -6,7 +6,7 @@ from facebook.config_loader import get_facebook_urls_for_city
 from facebook.scrape import scrape_facebook_group_posts_with_comments
 from twitter.scrape import search_twitter_for_city_with_replies
 from utils.dedupe import deduplicate_reviews
-from utils.seen import load_seen_hashes, save_seen_hashes, review_hash
+from utils.seen import load_seen_hashes, save_seen_hashes, review_hashh
 
 def save_reviews_to_csv(reviews, city):
     today = datetime.today().strftime("%Y-%m-%d")
